@@ -1,0 +1,22 @@
+//%p= @sql
+%nav.navbar.navbar-default
+  .container-fluid
+    %form.form-inline{:method => 'get'}
+      .form-group
+        %label start date
+        %input{:name => 'start_date', :type=> 'date', :size=>10, :value => @start_date, :min => '2015-09-01', :max => Time.now.to_date}
+      .form-group
+        %label end date
+        %input{:name => 'end_date', :type=> 'date', :size=>10, :value => @end_date, :min => '2015-09-01'}
+      .form-group
+        %input.btn.btn-default{:type => 'submit', :value => 'Submit'}
+  
+%table.table.table-condensed#report{:rules=>'all', :class=>'display',:width=>'100%',:cellspacing=>0}
+  %thead
+    %th Reporting District
+    %th ABC Crime Count
+  %tbody
+    - while row = @smt.fetch do
+      %tr
+        %td= row[0]
+        %td.right= format_cell row[1]
