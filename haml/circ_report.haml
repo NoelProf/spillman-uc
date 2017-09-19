@@ -1,0 +1,56 @@
+//%p= @sql
+%nav.navbar.navbar-default
+  .container-fluid
+    %form.form-inline{:method => 'get'}
+      .form-group
+        %label start date
+        %input{:name => 'start_date', :type=> 'date', :size=>10, :value => @start_date, :min => '2015-09-01', :max => Time.now.to_date}
+      .form-group
+        %label end date
+        %input{:name => 'end_date', :type=> 'date', :size=>10, :value => @end_date, :min => '2015-09-01'}
+      .form-group
+        %label circ
+        %select.form-control{:name => 'circ', :value => @circ}
+          %option{:value => 'any'}ANY
+          = ['DV','BM','LT','AB109','UOF', 'PUR','CDP','TRAN'].each do |e|
+            - if @circ == e
+              %option{:value =>e, :selected=>true}#{e}
+            - else
+              %option{:value => e}#{e}
+      .form-group
+        %label show
+        %select.form-control{:name => 'ccodes', :value => @ccodes}
+          - if @ccodes == 'reports'
+            %option{:value => 'reports', :selected=>true}reports
+            %option{:value => 'ALL'}ALL
+          - else
+            %option{:value => 'reports'}reports
+            %option{:value => 'ALL', :selected=>true}ALL
+      .form-group
+        %input.btn.btn-default{:type => 'submit', :value => 'Submit'}
+  
+%table.table.table-condensed#report{:rules=>'all', :class=>'display',:width=>'100%',:cellspacing=>0}
+  %thead
+    %th DR
+    %th statute
+    %th beat
+    %th locatn
+    %th address
+    %th dtrepor
+    %th ocurdt1
+    %th ccode
+    %th circ
+  %tbody
+    - last = ["dummy"]
+    - while row = @smt.fetch do
+      - if @statutes[row[0]]
+        - row.insert(1,@statutes[row[0]].join(','))
+      - else
+        - row.insert(1,'missing')
+      - if @circs[row[0]]
+        - row.insert(8,@circs[row[0]].join(','))
+      - else
+        - row.insert(8,'missing')
+      %tr
+        - row.each_with_index do |c,i| 
+          %td= format_cell c
