@@ -1,0 +1,52 @@
+//%p= @sql
+%nav.navbar.navbar-default
+  .container-fluid
+    %form.form-inline{:method => 'get'}
+      .form-group
+        %label start date
+        %input{:name => 'start_date', :type=> 'date', :size=>10, :value => @start_date, :min => '2015-09-01', :max => Time.now.to_date}
+      .form-group
+        %label end date
+        %input{:name => 'end_date', :type=> 'date', :size=>10, :value => @end_date, :min => '2015-09-01'}
+      .form-group
+        %label location
+        %select.form-control{:name => 'beat', :value => @beat}
+          %option{:value => 'any'}ANY
+          = ['BEAT 1-1','BEAT 1-2','BEAT 1-3','BEAT 2-1','BEAT 2-2', 'BEAT 2-3','Resort','High Schools'].each do |e|
+            - if @beat == e
+              %option{:value =>e, :selected=>true}#{e}
+            - else
+              %option{:value => e}#{e}
+      .form-group
+        %label show
+        %select.form-control{:name => 'ccodes', :value => @ccodes}
+          - if @ccodes == 'reports'
+            %option{:value => 'reports', :selected=>true}reports
+            %option{:value => 'ALL'}ALL
+          - else
+            %option{:value => 'reports'}reports
+            %option{:value => 'ALL', :selected=>true}ALL
+      .form-group
+        %input.btn.btn-default{:type => 'submit', :value => 'Submit'}
+  
+%table.table.table-condensed#report{:rules=>'all', :class=>'display',:width=>'100%',:cellspacing=>0}
+  %thead
+    %th DR
+    %th statute
+    %th beat
+    %th locatn
+    %th address
+    %th dtrepor
+    %th ocurdt1
+    %th ccode
+    %th nature
+  %tbody
+    - last = ["dummy"]
+    - while row = @smt.fetch do
+      %tr
+        %td
+          %a{:'data-placement'=>'right',:'data-toggle'=>'tooltip',:title=>(row[1])}
+            =row[0]
+        - row.each_with_index do |c,i| 
+          - next if i<2
+          %td= format_cell c
