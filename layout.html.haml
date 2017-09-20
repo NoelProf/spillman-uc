@@ -1,0 +1,99 @@
+!!! 5
+%html
+  %head
+    %meta{:charset=>'utf-8'}
+    %meta{:"http-equiv"=>'X-UA-Compatible', :content=>'IE=edge'}
+    %meta{:name=>'viewport', :content=>'width=device-width', :'initial-scale'=>'1"'}
+    %title=@title
+    %link{:rel=>'stylesheet', :href=>'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css', :integrity=>'sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7', :crossorigin=>'anonymous'}
+    
+    // Font Awsome
+    %link{rel: 'stylesheet', href: 'https://maxcdn.bootstrapcdn.com/font-awesome/4.6.0/css/font-awesome.min.css'}
+
+    //Optional theme
+    %link{:rel=>'stylesheet', :href=>'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css', :integrity=>'sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r', :crossorigin=>'anonymous'}
+    :css 
+       .div { 
+        display: block;
+       }
+       #logo {
+        background-image: url('#{(rand*100).round==42 ? 'image/donut.png' : 'image/ggpd2.png'}');
+        background-size: 100%;
+        width: 72px;
+        height: 72px;
+        border: 3px solid #069;
+        border-radius: 10px;
+        margin-left: 10px;
+        margin-top: -5px;
+        box-shadow: 0px 0px 5px #ddd;
+       }
+       .navbar  {
+         border: 1px solid #cfdeff;
+         border-radius: 5px;
+       }
+       p.title {
+        font-size: 1.7em;
+        margin: 7px 0 0 130px;
+      }
+    %link{ rel: 'stylesheet', type: 'text/css', href: 'https://cdn.datatables.net/v/dt/jq-2.2.3/dt-1.10.12/b-1.2.2/b-colvis-1.2.2/b-html5-1.2.2/fh-3.1.2/r-2.1.0/datatables.min.css' }
+     
+    %script{ type: 'text/javascript', src: 'https://cdn.datatables.net/v/dt/jq-2.2.3/dt-1.10.12/b-1.2.2/b-colvis-1.2.2/b-html5-1.2.2/fh-3.1.2/r-2.1.0/datatables.min.js' }
+ 
+    :javascript
+      $(document).ready(function() {
+       $('#report').DataTable( {
+        paging: false,
+        fixedHeader: true,
+        dom: 'Bfrtip',
+        buttons: [
+          'copyHtml5',
+          {
+            extend: 'csvHtml5',
+            fieldSeparator: '\u0009',
+            extension: '.tsv'
+          }, {
+            extend: 'colvis',
+            columns: ':not(:first-child)'
+          } ] 
+        } ) ;
+      } ) ;
+      
+
+  %body
+    .container-fluid
+      .navbar.navbar-default
+        %a.navbar-brand(href='https://ch.ci.garden-grove.ca.us/internal/pd_web/')         
+          #logo.navbar-brand
+        %p.title.navbar-text.navbar-left.hidden-xs.hidden-sm= @title
+        .navbar-header
+          %button.navbar-toggle(type="button" data-target=".navbar-collapse" data-toggle="collapse")
+            MENU
+            %span.fa-stack.fa-lg
+              %i.fa.fa-square-o.fa-stack-2x
+              %i.fa.fa-bars.fa-stack-1x
+        #navbar.collapse.navbar-collapse
+          %ul.nav.navbar-nav.nav-pills
+            %li
+              %a{href: 'https://ch.ci.garden-grove.ca.us/internal/pd_web/'}
+                %i.fa.fa-fw.fa-home
+                PD Home
+            %li
+              %a{href: 'https://ch.ci.garden-grove.ca.us/impounds/'}
+                %i.fa.fa-fw.fa-truck
+                Impounds 
+            %li
+              %a{href: 'https://ch.ci.garden-grove.ca.us/spillman/tc_report.rb'}
+                %i.fa.fa-fw.fa-car
+                TC 
+            %li
+              %a{href: 'https://ch.ci.garden-grove.ca.us/spillman/activity_report.rb'}
+                %i.fa.fa-fw.fa-search
+                Activity 
+            %li
+              %a{href: 'https://ch.ci.garden-grove.ca.us/spillman/pe_report.rb'}
+                %i.fa.fa-fw.fa-archive
+                P&E 
+    =yield
+    //Latest compiled and minified JavaScript
+    %script{:src=>'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js', :integrity=>'sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xSn', :crossorigin=>'anonymous'}
+

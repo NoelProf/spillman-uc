@@ -15,8 +15,8 @@ Timestamp to Date Casting
 select count(*),cast(towdate as date) as tow_on from vimain group by cast(towdate as date) order by tow_on desc;
 ```
 
-Evidence with Float Quanity
----------------------------
+Evidence with Float Quantity
+----------------------------
 
 ```sql
 select
@@ -184,8 +184,8 @@ SELECT j.lawnum,
 
 ```
 
-Injuction Offenders with Involvments in last 90 days
-----------------------------------------------------
+Injunction Offenders with Involvements in last 90 days
+-----------------------------------------------------
 
 ```sql
 select rec,relship,"date",(TRIM(n.last)||', '||TRIM(n.first)) as name
@@ -197,8 +197,8 @@ WHERE n."number" IN (SELECT namenum FROM somain WHERE type = 'INJ')
 ;
 ```
 
-Names with Gang Alerts with Involvments in last 90 days
--------------------------------------------------------
+Names with Gang Alerts with Involvements in last 90 days
+--------------------------------------------------------
 
 ```sql
 SELECT TRIM(rec) as rec_num,
