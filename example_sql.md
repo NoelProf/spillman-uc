@@ -95,7 +95,6 @@ List Arrests with name record
 
 Link by syinvolv
 
-<pre class="sh_sql"><code>
 ```sql
 SELECT lawnum,
 inmate,n."number" as name,counts,statute
