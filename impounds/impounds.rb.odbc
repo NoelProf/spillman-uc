@@ -1,0 +1,57 @@
+# NJP Apr2016
+ENV['ODBCINI'] = '/etc/odbc.ini'
+
+class Impound < Sinatra::Base
+  require 'rubygems'
+  require 'odbc_utf8'
+  require 'date'
+
+  set :haml, :format => :html5
+
+  client = ODBC.connect("spillman")
+
+  get '/' do
+    @title = "PD Impounds"
+
+    sql = %{SELECT 
+        i."number",
+        lpnum,
+        lpst,
+        year,
+        make,
+        model,
+        towdate,
+        impdate,
+        towedby,
+        "from" as "towed_from"
+      FROM vimain i
+      JOIN vhmain v ON i.vehicle = v."number"
+      WHERE impdate > '04/04/2016'
+      }
+
+    @smt = client.prepare(sql)
+    @smt.execute
+
+    haml :index
+  end
+
+  def self_link
+    plist = "?" 
+    params.each do |p| 
+      next if p[0]=='order'
+      plist << "#{p[0]}=#{p[1][0]}&"
+    end 
+    "impound.rb"+plist
+  end
+
+  def format_cell(val)
+    if val.class == ODBC::TimeStamp
+      "#{val.month.to_s.rjust(2,'0')}/#{val.day.to_s.rjust(2,'0')}/#{val.year} #{val.hour.to_s.rjust(2,'0')}#{val.minute.to_s.rjust(2,'0')}"
+    else
+      val 
+    end 
+  end 
+
+  private
+
+end

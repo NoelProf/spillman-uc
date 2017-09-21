@@ -1,0 +1,70 @@
+//%p= @sql
+%nav.navbar.navbar-default
+  .container-fluid
+    %form.form-inline{:method => 'get'}
+      .form-group
+        %label towed after
+        %input{:name => 'towed_after', :type=> 'date', :size=>10, :value => @towed_after, :min => '2015-09-01', :max => Time.now.to_date}
+      .form-group
+        %label location
+        %select.form-control{:name => 'beat', :value => @beat}
+          %option{:value => 'any'}ANY
+          = ['BEAT 1-1','BEAT 1-2','BEAT 1-3','BEAT 2-1','BEAT 2-2', 'BEAT 2-3'].each do |e|
+            - if @beat == e
+              %option{:value =>e, :selected=>true}#{e}
+            - else
+              %option{:value => e}#{e}
+      .form-group
+        %label show
+        %select.form-control{:name => 'ccodes', :value => @ccodes}
+          - if @ccodes == 'reports'
+            %option{:value => 'reports', :selected=>true}reports
+            %option{:value => 'ALL'}ALL
+          - else
+            %option{:value => 'reports'}reports
+            %option{:value => 'ALL', :selected=>true}ALL
+      .form-group
+        %input.btn.btn-default{:type => 'submit', :value => 'Submit'}
+  
+%table.table.table-hover.table-condensed.table-bordered{:rules=>'all'}
+  %thead
+    %th 
+      %a{:href=>"#{self_link}order=number"}
+        number
+    %th 
+      %a{:href=>"#{self_link}order=lpnum"}
+        lpnum
+    %th 
+      %a{:href=>"#{self_link}order=lpst"}
+        lpst
+    %th 
+      %a{:href=>"#{self_link}order=year"}
+        year
+    %th 
+      %a{:href=>"#{self_link}order=make"}
+        make
+    %th 
+      %a{:href=>"#{self_link}order=model"}
+        model
+    %th 
+      %a{:href=>"#{self_link}order=towdate"}
+        towdate
+    %th 
+      %a{:href=>"#{self_link}order=impdate"}
+        impdate
+    %th 
+      %a{:href=>"#{self_link}order=towedby"}
+        towedby
+    %th 
+      %a{:href=>"#{self_link}order=towed_from"}
+        from
+  %tbody
+    - last = ["dummy"]
+    - while (@rsS.next) do
+      %tr
+        %td
+          %a{href: letter_link, target: '_new'}
+            =@rsS.getObject('number')
+        - for c in 1.upto(@cc)
+          - next if c<2 || c>10
+          %td= format_cell @rsS.getString(c)

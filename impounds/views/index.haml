@@ -1,0 +1,70 @@
+%nav.navbar.navbar-default
+  .container-fluid
+    %form.form-inline{:method => 'get'}
+      .form-group
+        %label impound after
+        %input{:name => 'impound_after', :type=> 'date', :size=>10, :value => @impound_after, :min => '2015-09-01', :max => Time.now.to_date}
+      .form-group
+        %label impount type
+        %select.form-control{:name => 'type', :value => @type}
+          %option{:value => 'any'}ANY
+          = ['PPI and REPO','GGPD'].each do |e|
+            - if @type == e
+              %option{:value =>e, :selected=>true}#{e}
+            - else
+              %option{:value => e}#{e}
+      .form-group
+        %input.btn.btn-default{:type => 'submit', :value => 'Submit'}
+
+%p
+  User:
+  = @env['REMOTE_USER']
+  =# @env.keys
+  
+%table.table.table-hover.table-condensed.table-bordered{:rules=>'all'}
+  %thead
+    %th 
+      %a{:href=>"#{self_link}order=number"}
+        number
+    %th 
+      %a{:href=>"#{self_link}order=lpnum"}
+        lpnum
+    %th 
+      %a{:href=>"#{self_link}order=lpst"}
+        lpst
+    %th 
+      %a{:href=>"#{self_link}order=year"}
+        year
+    %th 
+      %a{:href=>"#{self_link}order=make"}
+        make
+    %th 
+      %a{:href=>"#{self_link}order=model"}
+        model
+    %th 
+      %a{:href=>"#{self_link}order=towdate"}
+        time authorized
+    %th 
+      %a{:href=>"#{self_link}order=impdate"}
+        towtime
+    %th 
+      %a{:href=>"#{self_link}order=towedby"}
+        towedby
+    %th 
+      %a{:href=>"#{self_link}order=towed_from"}
+        from
+    %th 
+      imptyp
+    %th 
+      incid
+  %tbody
+    - last = ["dummy"]
+    - @smt.each_hash do |r|
+      %tr
+        %td
+          %a{href: letter_link(r), target: '_new'}
+            =r['number']
+        - h = r.to_a
+        - for c in 1.upto(r.size)
+          - next if c<1 || c>11
+          %td= format_cell h[c]

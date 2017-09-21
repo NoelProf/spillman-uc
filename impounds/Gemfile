@@ -1,0 +1,12 @@
+source 'http://rubygems.org'
+#
+# basics
+gem 'bundler'
+gem 'thin' # thin doesn't compile with jruby
+# sinatra
+gem 'sinatra'
+gem 'haml'
+# db
+# requires unixODBC, unixODBC-devel packages 
+gem 'ruby-odbc'
+

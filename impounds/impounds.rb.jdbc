@@ -1,0 +1,112 @@
+# NJP Apr2016
+class Impound < Sinatra::Base
+  require 'rubygems'
+  require 'date'
+  require '/usr/share/java/ctreeJDBC.jar'
+  require 'java'
+
+  set :haml, :format => :html5
+
+  Java::ctree.jdbc.ctreeDriver
+  userurl = "jdbc:ctree:6597@spillman:live"
+  connSelect = java.sql.DriverManager.get_connection(userurl, "odbcuser", "****")
+
+  helpers do 
+    def go(val)
+      obj = @rsS.getObject(val)
+      if obj.class == Java::JavaSql::Timestamp
+        "#{val}=#{obj.month.to_s.rjust(2,'0')}/#{obj.day.to_s.rjust(2,'0')}/#{obj.year} #{obj.hours.to_s.rjust(2,'0')}#{obj.minutes.to_s.rjust(2,'0')}&"
+      elsif obj.class == Fixnum
+        "#{val}=#{obj}&"
+      else
+        obj ? "#{val}=#{obj.strip}&" : ""
+      end
+    end
+
+    def letter_link
+      str = "/pdfer/impound?"
+      str << (go 'number')
+      str << (go 'first')
+      str << (go 'last')
+      str << (go 'street')
+      str << (go 'city')
+      str << (go 'state')
+      str << (go 'zip')
+      str << (go 'impdate')
+      str << (go 'lpnum')
+      str << (go 'lpst')
+      str << (go 'year')
+      str << (go 'make')
+      str << (go 'model')
+      str << (go 'vin')
+      str << (go 'desc')
+      str << (go 'tow_phone')
+      str << (go 'tow_address')
+      str << (go 'tow_csz')
+      str << (go 'incid')
+    end
+
+    def self_link
+      plist = "?" 
+      params.each do |p| 
+        next if p[0]=='order'
+        plist << "#{p[0]}=#{p[1][0]}&"
+      end 
+      "impound.rb"+plist
+    end
+
+    def format_cell(val)
+      if val.class == Java::JavaSql::Timestamp
+        "#{val.month.to_s.rjust(2,'0')}/#{val.day.to_s.rjust(2,'0')}/#{val.year} #{val.hours.to_s.rjust(2,'0')}#{val.minutes.to_s.rjust(2,'0')}"
+      else
+        val 
+      end 
+    end 
+  end
+
+  get '/' do
+    @title = "PD Impounds"
+
+    stmtSelect = connSelect.create_statement
+    @sql = %{SELECT 
+        i."number",
+        lpnum,
+        lpst,
+        year,
+        make,
+        model,
+        towdate,
+        impdate,
+        towedby,
+        "from" as "towed_from",
+        v.vin,
+        n.first,
+        n.last,
+        n.street,
+        n.city,
+        n.state,
+        n.zip,
+        w."desc",
+        w.street as tow_address,
+        w.person1 as tow_phone,
+        w.csz as tow_csz,
+        i.incid
+      FROM vimain i
+      JOIN vhmain v ON i.vehicle = v."number"
+      JOIN tbwreck w ON w.abbr = i.towedby
+      LEFT OUTER JOIN nmmain n ON v.ownerid = n."number"
+      WHERE impdate > '04/04/2016'
+      }
+
+    @rsS = stmtSelect.execute_query(@sql)
+    rsM = @rsS.getMetaData()
+    @cc = rsM.getColumnCount
+
+    haml :index
+  end
+
+
+
+  private
+
+end
